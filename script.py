@@ -22,8 +22,9 @@ def first_pass( commands ):
 
     name = 'image'
     num_frames = 1
+
     foundV = False
-    foundF = True
+    foundF = False
     foundB = False
 
     for command in commands:
@@ -37,16 +38,20 @@ def first_pass( commands ):
                 exit(0)
 
         elif op == 'frames':
+            foundF = True
             if 'args' in command:
-                num_frames = command['args'][0]
+                num_frames = int(command['args'][0])
             else:
                 print("Frame needs arguments\n")
                 exit(0)
         elif op == 'vary':
+            foundV = True
 
-        if (foundV and !foundF):
+        if (foundV and not foundF):
             print("Vary was found but not frames\n")
             exit(0)
+        if(not foundB):
+            print("The basename is" + name + "\n")
 
     return (name, num_frames)
 
@@ -69,7 +74,20 @@ def first_pass( commands ):
   ===================="""
 def second_pass( commands, num_frames ):
     frames = [ {} for i in range(num_frames) ]
-
+    for command in commands:
+        if command['op'] == 'vary':
+            if 'args' and 'knob' in command:
+                args = command['args']
+                i = int(args[0])
+                start = args[2]
+                step = float((args[3] - args[2]) / (args[1] - args[0]))
+                while(i < args[1]):
+                    frames[i][command['knob']] = args[2]
+                    i += 1
+                    start += step
+            else:
+                print("vary command needs a knob and arguments\n")
+                exit(0)
     return frames
 
 
