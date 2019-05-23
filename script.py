@@ -80,11 +80,12 @@ def second_pass( commands, num_frames ):
                 args = command['args']
                 i = int(args[0])
                 start = args[2]
-                step = float((args[3] - args[2]) / (args[1] - args[0]))
+                step = float((args[3] - args[2])) / (args[1] - args[0])
                 while(i < args[1]):
-                    frames[i][command['knob']] = args[2]
+                    frames[i][command['knob']] = start
                     i += 1
                     start += step
+
             else:
                 print("vary command needs a knob and arguments\n")
                 exit(0)
@@ -144,7 +145,7 @@ def run(filename):
         consts = ''
         coords = []
         coords1 = []
-
+        knob = 1
 
         for command in commands:
             print command
@@ -155,6 +156,7 @@ def run(filename):
             if c == 'box':
                 if command['constants']:
                     reflect = command['constants']
+
                 add_box(tmp,
                         args[0], args[1], args[2],
                         args[3], args[4], args[5])
@@ -162,6 +164,7 @@ def run(filename):
                 draw_polygons(tmp, screen, zbuffer, view, ambient, light, symbols, reflect)
                 tmp = []
                 reflect = '.white'
+
             elif c == 'sphere':
                 if command['constants']:
                     reflect = command['constants']
@@ -187,15 +190,29 @@ def run(filename):
                 draw_lines(tmp, screen, zbuffer, color)
                 tmp = []
             elif c == 'move':
-                tmp = make_translate(args[0], args[1], args[2])
+
+                if command['knob']:
+                    knob = symbols[command['knob']]
+
+                tmp = make_translate(args[0] * knob, args[1] * knob, args[2] * knob)
                 matrix_mult(stack[-1], tmp)
+
                 stack[-1] = [x[:] for x in tmp]
                 tmp = []
+
+                knob = 1
             elif c == 'scale':
-                tmp = make_scale(args[0], args[1], args[2])
+                if command['knob']:
+                    knob = symbols[command['knob']]
+
+                print(" " + str(knob) + " \n")
+                tmp = make_scale(args[0] , args[1] , args[2] )
+
                 matrix_mult(stack[-1], tmp)
                 stack[-1] = [x[:] for x in tmp]
                 tmp = []
+                knob = 1
+
             elif c == 'rotate':
                 theta = args[1] * (math.pi/180)
                 if args[0] == 'x':
