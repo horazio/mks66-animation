@@ -1,5 +1,7 @@
 from subprocess import Popen, PIPE
 from os import remove
+from os import fork
+from os import execlp
 
 #constants
 XRES = 500
