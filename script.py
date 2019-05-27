@@ -78,6 +78,12 @@ def second_pass( commands, num_frames ):
         if command['op'] == 'vary':
             if 'args' and 'knob' in command:
                 args = command['args']
+                if(args[0] > 0):
+                    i = 0
+                    while(i < args[0]):
+                        if(not(command['knob'] in frames[i])):
+                            frames[i][command['knob']] = 0
+                        i += 1
                 i = int(args[0])
                 start = args[2]
                 step = float((args[3] - args[2])) / (args[1] - args[0])
@@ -133,7 +139,8 @@ def run(filename):
     for frame in frames:
         for key in frame:
             symbols[key] = frame[key]
-
+        
+        
         tmp = new_matrix()
         ident( tmp )
 
@@ -204,10 +211,10 @@ def run(filename):
                 knob = 1
 
             elif c == 'scale':
-
+                
                 if command['knob']:
                     knob = symbols[command['knob']]
-
+                
                 tmp = make_scale(args[0] * knob, args[1] * knob, args[2] * knob )
 
                 matrix_mult(stack[-1], tmp)
