@@ -139,8 +139,8 @@ def run(filename):
     for frame in frames:
         for key in frame:
             symbols[key] = frame[key]
-        
-        
+
+
         tmp = new_matrix()
         ident( tmp )
 
@@ -148,7 +148,7 @@ def run(filename):
         screen = new_screen()
         zbuffer = new_zbuffer()
         tmp = []
-        step_3d = 100
+        step_3d = 5
         consts = ''
         coords = []
         coords1 = []
@@ -211,10 +211,10 @@ def run(filename):
                 knob = 1
 
             elif c == 'scale':
-                
+
                 if command['knob']:
                     knob = symbols[command['knob']]
-                
+
                 tmp = make_scale(args[0] * knob, args[1] * knob, args[2] * knob )
 
                 matrix_mult(stack[-1], tmp)
@@ -251,4 +251,9 @@ def run(filename):
             #print("saving\n")
             save_extension(screen, "./anim/" + name + "%03d"%i)
             #print("saved\n")
-    make_animation(name)
+        else:
+            save_extension(screen, name)
+            display(screen)
+
+    if num_frames > 1:
+        make_animation(name)
